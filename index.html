@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Detective Sheet</title>
+    <style>
+        body {
+            background-color: #f0f0f0;
+            font-family: "Arial Black", Gadget, sans-serif;
+            display: flex;
+            justify-content: center;
+            padding: 10px;
+            margin: 0;
+        }
+        .sheet {
+            background-color: #1a5fb4;
+            width: 100%;
+            max-width: 500px;
+            border-radius: 8px;
+            padding: 15px;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        h2 { margin: 5px 0; font-size: 1.2rem; text-transform: uppercase; border-bottom: 2px solid white; }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+        th, td {
+            border: 1px solid #1a5fb4;
+            height: 35px;
+            text-align: center;
+            position: relative;
+        }
+        .label-cell {
+            background-color: white;
+            color: #1a5fb4;
+            text-align: left;
+            padding-left: 10px;
+            width: 40%;
+            font-style: italic;
+            font-weight: bold;
+        }
+        .input-cell {
+            background-color: white;
+            width: 10%;
+            cursor: pointer;
+            color: black;
+            font-size: 0.8rem;
+            user-select: none;
+        }
+        /* States */
+        .state-none { background-color: white; }
+        .state-yes { background-color: #4bb543 !important; color: white !important; } /* Green */
+        .state-no { background-color: #cc0000 !important; color: white !important; }  /* Red */
+        .state-maybe { background-color: #f4d03f !important; color: black !important; } /* Yellow */
+
+        .player-row { background-color: #1a5fb4; color: white; height: 25px;}
+        .player-row input { 
+            width: 90%; background: transparent; border: 1px solid white; 
+            color: white; text-align: center; 
+        }
+    </style>
+</head>
+<body>
+
+<div class="sheet">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span>PLAYERS</span>
+        <div id="player-inputs">
+            <input type="text" style="width:30px"> <input type="text" style="width:30px">
+            <input type="text" style="width:30px"> <input type="text" style="width:30px">
+            <input type="text" style="width:30px"> <input type="text" style="width:30px">
+        </div>
+    </div>
+
+    <section id="who">
+        <h2>Who?</h2>
+        <table id="table-who"></table>
+    </section>
+
+    <section id="what">
+        <h2>What?</h2>
+        <table id="table-what"></table>
+    </section>
+
+    <section id="where">
+        <h2>Where?</h2>
+        <table id="table-where"></table>
+    </section>
+    
+    <button onclick="window.location.reload()" style="width:100%; padding: 10px; background: #000; color: white; border: none; border-radius: 5px; cursor: pointer;">RESET SHEET</button>
+</div>
+
+<script>
+    const data = {
+        who: ["Green", "Mustard", "Orchid", "Peacock", "Plum", "Scarlett"],
+        what: ["Candlestick", "Dagger", "Lead Pipe", "Revolver", "Rope", "Wrench"],
+        where: ["Ballroom", "Billiard Room", "Conservatory", "Dining Room", "Hall", "Kitchen", "Library", "Lounge", "Study"]
+    };
+
+    function createTable(id, list) {
+        const table = document.getElementById('table-' + id);
+        list.forEach(item => {
+            const row = document.createElement('tr');
+            row.innerHTML = `<td class="label-cell">${item}</td>` + 
+                            `<td class="input-cell" onclick="cycleState(this)" oncontextmenu="addText(event, this)"></td>`.repeat(6);
+            table.appendChild(row);
+        });
+    }
+
+    function cycleState(el) {
+        if (el.classList.contains('state-none')) {
+            el.classList.remove('state-none');
+            el.classList.add('state-yes');
+            el.innerText = '✓';
+        } else if (el.classList.contains('state-yes')) {
+            el.classList.remove('state-yes');
+            el.classList.add('state-no');
+            el.innerText = 'X';
+        } else if (el.classList.contains('state-no')) {
+            el.classList.remove('state-no');
+            el.classList.add('state-maybe');
+            el.innerText = '?';
+        } else {
+            el.classList.remove('state-maybe');
+            el.classList.add('state-none');
+            el.innerText = '';
+        }
+    }
+
+    function addText(e, el) {
+        e.preventDefault();
+        const txt = prompt("Enter note (e.g. Turn 3):", el.innerText);
+        if (txt !== null) el.innerText = txt;
+    }
+
+    // Initialize
+    createTable('who', data.who);
+    createTable('what', data.what);
+    createTable('where', data.where);
+</script>
+
+</body>
+</html>
